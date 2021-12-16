@@ -122,14 +122,6 @@ import sampleData from './sampleData.js';
             draw(canvas);
         }).observe(canvasContainer);
 
-        canvas.onwheel = (ev) => {
-            ev.preventDefault();
-            scrollY -= ev.deltaY * 0.2;
-            scrollY = scrollY > 0 ? 0 : scrollY;
-            scrollX -= ev.deltaX * 0.2;
-            scrollX = scrollX < 0 ? 0 : scrollX;
-            canvasContainer.scroll(-scrollX, -scrollY);
-        };
         canvasContainer.onscroll = (ev) => {
             scrollY = -canvasContainer.scrollTop;
             scrollX = -canvasContainer.scrollLeft;

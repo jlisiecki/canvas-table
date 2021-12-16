@@ -6,11 +6,11 @@ body {
     height: 100vh;
     position: relative;
     overflow: auto;
+    z-index: 1;
 }
 #canvas-container > div {
     position: relative;
-    width: 100%;
-    z-index: 1;
+    z-index: 3;
 }
 #canvas-container > canvas {
     position: fixed;
