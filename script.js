@@ -102,7 +102,9 @@ import sampleData from './sampleData.js';
         ctx.fillText(
             fitString(ctx, text, rowWidth - padding * 2),
             scrollX + columnPosition + padding,
-            scrollY + rowNumber * rowHeight + (rowHeight - padding)
+            scrollY +
+                rowNumber * rowHeight +
+                (rowHeight - padding - lineWidth * 2 - 0.5)
         );
     }
 
