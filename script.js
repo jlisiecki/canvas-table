@@ -12,7 +12,7 @@ import sampleData from './sampleData.js';
 
     const report = new Global();
 
-    const binarySearch = ({ max, getValue, match }) => {
+    function binarySearch({ max, getValue, match }) {
         let min = 0;
 
         while (min <= max) {
@@ -25,9 +25,9 @@ import sampleData from './sampleData.js';
         }
 
         return max;
-    };
+    }
 
-    const fitString = (ctx, str, maxWidth) => {
+    function fitString(ctx, str, maxWidth) {
         let width = ctx.measureText(str).width;
         const ellipsis = '…';
         const ellipsisWidth = ctx.measureText(ellipsis).width;
@@ -42,7 +42,7 @@ import sampleData from './sampleData.js';
         });
 
         return str.substring(0, index) + ellipsis;
-    };
+    }
 
     function draw(canvas) {
         if (!canvas.getContext) return;
