@@ -3,12 +3,18 @@ import sampleData from './sampleData.js';
 
 (function (d, w) {
     let scrollY = 0;
+    let deltaY = 0;
     let scrollX = 0;
     let yStartIndex = 0;
     let yStopIndex = 0;
     const padding = 3;
     const fontSize = 13;
     const lineWidth = 1;
+    const canvasContainer = d.getElementById('canvas-container');
+    const canvas = canvasContainer?.getElementsByTagName('canvas')?.[0];
+    const div = canvasContainer?.getElementsByTagName('div')?.[0];
+    const ctx = canvas.getContext('2d');
+    const rowHeight = fontSize + padding * 2 + lineWidth * 2;
 
     const report = new Global();
 
@@ -44,20 +50,37 @@ import sampleData from './sampleData.js';
         return str.substring(0, index) + ellipsis;
     }
 
-    function draw(canvas) {
-        if (!canvas.getContext) return;
-        const ctx = canvas.getContext('2d');
-        // clear canvas
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    function draw() {
+        if (deltaY <= 0 || Math.abs(deltaY) > ctx.canvas.height) {
+            //clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            yStartIndex = Math.floor(
+                -scrollY / (fontSize + 2 * padding + 2 * lineWidth)
+            );
 
-        yStartIndex = Math.floor(
-            -scrollY / (fontSize + 2 * padding + 2 * lineWidth)
-        );
+            yStopIndex = Math.ceil(
+                (canvas.height - scrollY) /
+                    (fontSize + 2 * padding + 2 * lineWidth)
+            );
+        } else {
+            const imageData = ctx.getImageData(
+                0,
+                deltaY,
+                ctx.canvas.width,
+                ctx.canvas.height
+            );
+            ctx.putImageData(imageData, 0, 0);
 
-        yStopIndex = Math.ceil(
-            (canvas.height - scrollY) / (fontSize + 2 * padding + 2 * lineWidth)
-        );
+            yStopIndex = Math.ceil(
+                (canvas.height - scrollY) /
+                    (fontSize + 2 * padding + 2 * lineWidth)
+            );
+
+            yStartIndex =
+                yStopIndex - Math.abs(Math.ceil(deltaY / rowHeight)) - 1;
+        }
+
+        console.log(yStopIndex - yStartIndex);
 
         for (let index = yStartIndex; index <= yStopIndex; index++) {
             const data = sampleData[index];
@@ -84,10 +107,17 @@ import sampleData from './sampleData.js';
     }
 
     function cell(ctx, rowNumber, columnPosition, rowWidth, text) {
-        const rowHeight = fontSize + padding * 2 + lineWidth * 2;
-
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = 'black';
+
+        ctx.fillStyle = 'white';
+
+        ctx.fillRect(
+            columnPosition + scrollX + 0.5,
+            rowNumber * rowHeight + scrollY + 0.5,
+            rowWidth,
+            rowHeight
+        );
 
         ctx.strokeRect(
             columnPosition + scrollX + 0.5,
@@ -108,9 +138,6 @@ import sampleData from './sampleData.js';
         );
     }
 
-    const canvasContainer = d.getElementById('canvas-container');
-    const canvas = canvasContainer?.getElementsByTagName('canvas')?.[0];
-    const div = canvasContainer?.getElementsByTagName('div')?.[0];
     if (canvas) {
         div.style.height = `${
             sampleData.length * (lineWidth * 2 + padding * 2 + fontSize)
@@ -121,13 +148,14 @@ import sampleData from './sampleData.js';
         new ResizeObserver(() => {
             canvas.width = canvasContainer.clientWidth;
             canvas.height = canvasContainer.clientHeight;
-            draw(canvas);
+            draw();
         }).observe(canvasContainer);
 
         canvasContainer.onscroll = (ev) => {
+            deltaY = canvasContainer.scrollTop + scrollY;
             scrollY = -canvasContainer.scrollTop;
             scrollX = -canvasContainer.scrollLeft;
-            draw(canvas);
+            draw();
         };
     }
 })(document, window);
