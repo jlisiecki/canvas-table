@@ -76,7 +76,7 @@ import sampleData from './sampleData.js';
                     index,
                     columnPosition,
                     column.width,
-                    data[column.dataProperty]?.toString() || ''
+                    data?.[column.dataProperty]?.toString() || ''
                 );
                 columnPosition += column.width;
             });
