@@ -51,7 +51,7 @@ import sampleData from './sampleData.js';
     }
 
     function draw() {
-        if (deltaY <= 0 || Math.abs(deltaY) > ctx.canvas.height) {
+        if (deltaY == 0 || Math.abs(deltaY) > ctx.canvas.height) {
             //clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             yStartIndex = Math.floor(
@@ -62,7 +62,7 @@ import sampleData from './sampleData.js';
                 (canvas.height - scrollY) /
                     (fontSize + 2 * padding + 2 * lineWidth)
             );
-        } else {
+        } else if (deltaY > 0) {
             const imageData = ctx.getImageData(
                 0,
                 deltaY,
@@ -78,6 +78,21 @@ import sampleData from './sampleData.js';
 
             yStartIndex =
                 yStopIndex - Math.abs(Math.ceil(deltaY / rowHeight)) - 1;
+        } else if (deltaY < 0) {
+            const imageData = ctx.getImageData(
+                0,
+                deltaY,
+                ctx.canvas.width,
+                ctx.canvas.height
+            );
+            ctx.putImageData(imageData, 0, 0);
+
+            yStartIndex = Math.floor(
+                -scrollY / (fontSize + 2 * padding + 2 * lineWidth)
+            );
+
+            yStopIndex =
+                yStartIndex + Math.abs(Math.ceil(deltaY / rowHeight)) + 1;
         }
 
         console.log(yStopIndex - yStartIndex);
