@@ -163,14 +163,14 @@ import sampleData from './sampleData.js';
         new ResizeObserver(() => {
             canvas.width = canvasContainer.clientWidth;
             canvas.height = canvasContainer.clientHeight;
-            draw();
+            w.requestAnimationFrame(draw);
         }).observe(canvasContainer);
 
         canvasContainer.onscroll = (ev) => {
             deltaY = canvasContainer.scrollTop + scrollY;
             scrollY = -canvasContainer.scrollTop;
             scrollX = -canvasContainer.scrollLeft;
-            draw();
+            w.requestAnimationFrame(draw);
         };
     }
 })(document, window);
