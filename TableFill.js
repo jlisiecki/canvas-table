@@ -74,6 +74,7 @@ export default class TableFill {
         this.table.appendChild(this.tbody);
         new ResizeObserver(() => {
             this.rows = [];
+            this.tbody.innerHTML = '';
             for (
                 let i = 0;
                 i <
@@ -112,18 +113,33 @@ export default class TableFill {
     fillTable() {
         let pst = performance.now();
         const start = Math.floor(this.scrollTop / this.rowHeight);
-        if (start + this.rows.length - 1 >= this.data.length)
-            this.table.style.marginTop =
-                (-this.scrollTop % this.rowHeight) + 'px';
-        if (start !== this.startIndex) {
+
+        if (start === this.startIndex && this.scrollTop !== 0) return;
+
+        if (
+            this.startIndex < start &&
+            start - this.startIndex < this.rows.length
+        ) {
+            for (let i = 0; i < start - this.startIndex; i++) {
+                const row = this.rows.shift();
+                const dataRow =
+                    this.data[this.startIndex + this.rows.length + i + 1];
+                Object.keys(row).forEach((key) => {
+                    row[key].innerText = dataRow[key];
+                });
+                this.rows.push(row);
+                this.tbody.appendChild(this.tbody.childNodes[0]);
+            }
+        } else {
             for (let i = start; i < start + this.rows.length; i++) {
                 this.report.columns.forEach((column) => {
                     this.rows[i - start][column.dataProperty].innerText =
                         this.data[i][column.dataProperty];
                 });
             }
-            this.startIndex = start;
         }
+        this.startIndex = start;
+
         console.log(performance.now() - pst);
     }
 }
