@@ -117,6 +117,7 @@ export default class TableFill {
         }).observe(this.container);
     }
     fillTable() {
+        const st = performance.now();
         const start = Math.floor(this.scrollTop / this.rowHeight);
 
         if (start === this.startIndex && this.scrollTop !== 0) return;
@@ -144,5 +145,6 @@ export default class TableFill {
             }
         }
         this.startIndex = start;
+        console.log(performance.now() - st);
     }
 }
