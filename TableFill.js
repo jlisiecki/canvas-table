@@ -1,7 +1,7 @@
 import Global from './Global.js';
 export default class TableFill {
     constructor(containerSelector, data = [], report = new Global()) {
-        this.rowHeight = 24;
+        this.rowHeight = 20;
         this.container = document.querySelector(containerSelector);
         if (!this.container) throw new Error('Invalid selector!');
         this.report = report;
@@ -17,12 +17,14 @@ export default class TableFill {
         this.container.style.height = '100vh';
         this.container.style.overflow = 'auto';
         this.container.style.position = 'relative';
+        this.container.style.zIndex = 6;
         this.container.addEventListener('scroll', () => {
             this.scrollTop = this.container.scrollTop;
-            this.table.style.marginLeft = `-${this.container.scrollLeft}px`;
             window.requestAnimationFrame(() => {
-                this.table.style.marginTop =
-                    -(this.scrollTop % this.rowHeight) + 'px';
+                this.table.style.marginLeft = `-${this.container.scrollLeft}px`;
+                // this.table.style.marginTop = `-${
+                //     this.scrollTop % this.rowHeight
+                // }px`;
                 this.fillTable();
             });
         });
