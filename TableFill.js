@@ -20,7 +20,11 @@ export default class TableFill {
         this.container.addEventListener('scroll', () => {
             this.scrollTop = this.container.scrollTop;
             this.table.style.marginLeft = `-${this.container.scrollLeft}px`;
-            this.fillTable();
+            window.requestAnimationFrame(() => {
+                this.table.style.marginTop =
+                    -(this.scrollTop % this.rowHeight) + 'px';
+                this.fillTable();
+            });
         });
     }
     createPlaceholder() {
@@ -48,6 +52,8 @@ export default class TableFill {
         this.table.style.height = '100%';
         this.tableContainer.appendChild(this.table);
         this.headRow = document.createElement('div');
+        this.headRow.style.position = 'sticky';
+        this.headRow.style.top = 0;
         this.headRow.style.width =
             this.report.columns.reduce((p, c) => {
                 return p + c.width;
@@ -65,7 +71,8 @@ export default class TableFill {
             th.style.height = this.rowHeight + 'px';
             th.style.borderBottom = '1px solid #000';
             th.style.borderRight = '1px solid #000';
-
+            th.style.zIndex = 4;
+            th.style.backgroundColor = '#fff';
             this.headRow.appendChild(th);
             th.innerText = column.name;
             th.style.width = column.width + 'px';
@@ -78,8 +85,7 @@ export default class TableFill {
             for (
                 let i = 0;
                 i <
-                Math.ceil(this.tableContainer.offsetHeight / this.rowHeight) -
-                    1;
+                Math.ceil(this.tableContainer.offsetHeight / this.rowHeight);
                 i++
             ) {
                 const row = {};
@@ -107,11 +113,10 @@ export default class TableFill {
                     tr.appendChild(td);
                 });
             }
-            this.fillTable();
+            window.requestAnimationFrame(() => this.fillTable());
         }).observe(this.container);
     }
     fillTable() {
-        let pst = performance.now();
         const start = Math.floor(this.scrollTop / this.rowHeight);
 
         if (start === this.startIndex && this.scrollTop !== 0) return;
@@ -139,7 +144,5 @@ export default class TableFill {
             }
         }
         this.startIndex = start;
-
-        console.log(performance.now() - pst);
     }
 }

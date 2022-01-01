@@ -8,8 +8,7 @@ app.on('ready', () => {
         height: 600
     });
 
-    mainWindow.webContents.setFrameRate(5);
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile('table-fill.html');
 });
 
 app.on('window-all-closed', () => app.quit());
