@@ -1,11 +1,10 @@
 import Global from './Global.js';
 export default class TableFill {
-    constructor(containerSelector, data = [], report = new Global()) {
+    constructor(containerSelector, report = new Global()) {
         this.rowHeight = 20;
         this.container = document.querySelector(containerSelector);
         if (!this.container) throw new Error('Invalid selector!');
         this.report = report;
-        this.data = data;
         this.styleContainer();
         this.createPlaceholder();
         this.createTable();
@@ -29,15 +28,16 @@ export default class TableFill {
             });
         });
     }
-    createPlaceholder() {
+    async createPlaceholder() {
         this.placeholder = document.createElement('div');
         this.container.appendChild(this.placeholder);
         this.placeholder.style.width =
             this.report.columns.reduce((p, c) => {
                 return p + c.width;
             }, 0) + 'px';
-        this.placeholder.style.height =
-            this.rowHeight * this.data.length + 'px';
+        const dataLength = await window.bridge.dataLengthRequest();
+        console.log(dataLength);
+        this.placeholder.style.height = this.rowHeight * dataLength + 'px';
         this.placeholder.style.zIndex = '2';
         this.placeholder.style.position = 'relative';
     }
@@ -118,7 +118,7 @@ export default class TableFill {
             window.requestAnimationFrame(() => this.fillTable());
         }).observe(this.container);
     }
-    fillTable() {
+    async fillTable() {
         const st = performance.now();
         const start = Math.floor(this.scrollTop / this.rowHeight);
 
@@ -128,10 +128,19 @@ export default class TableFill {
             this.startIndex < start &&
             start - this.startIndex < this.rows.length
         ) {
+            const data = await window.bridge.dataPortionRequest(
+                this.startIndex + this.rows.length + 1,
+                this.startIndex +
+                    this.rows.length +
+                    start -
+                    this.startIndex +
+                    1,
+                this.report.columns
+            );
+
             for (let i = 0; i < start - this.startIndex; i++) {
                 const row = this.rows.shift();
-                const dataRow =
-                    this.data[this.startIndex + this.rows.length + i + 1];
+                const dataRow = data[i];
                 Object.keys(row).forEach((key) => {
                     row[key].innerText = dataRow[key];
                 });
@@ -139,10 +148,15 @@ export default class TableFill {
                 this.tbody.appendChild(this.tbody.childNodes[0]);
             }
         } else {
-            for (let i = start; i < start + this.rows.length; i++) {
-                this.report.columns.forEach((column) => {
-                    this.rows[i - start][column.dataProperty].innerText =
-                        this.data[i][column.dataProperty];
+            const data = await window.bridge.dataPortionRequest(
+                start,
+                start + this.rows.length,
+                this.report.columns
+            );
+            for (let i = 0; i < this.rows.length; i++) {
+                this.report.columns.forEach(async (column) => {
+                    this.rows[i][column.dataProperty].innerText =
+                        data[i][column.dataProperty];
                 });
             }
         }
