@@ -1,0 +1,44 @@
+.datatable-container {
+    width: 100%;
+    height: 100vh;
+    overflow: auto;
+    position: relative;
+}
+.datatable-placeholder {
+    width: 3195px;
+    height: 27040px;
+    z-index: 1;
+    position: relative;
+}
+.datatable-table-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    top: 0px;
+}
+.datatable-table {
+    height: 100%;
+    border-top: 1px solid rgb(0, 0, 0);
+    border-left: 1px solid rgb(0, 0, 0);
+    margin-left: 0px;
+}
+.datatable-head {
+    position: sticky;
+    top: 0px;
+}
+.datatable-cell {
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float: left;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    border-right: 1px solid rgb(0, 0, 0);
+    padding: 0px;
+}
+.datatable-head > .datatable-cell {
+    z-index: 2;
+    background-color: rgb(255, 255, 255);
+}

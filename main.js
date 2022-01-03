@@ -14,9 +14,11 @@ ipcMain.handle('dataPortionRequest', (event, startIndex, endIndex, columns) => {
     for (let i = startIndex; i <= endIndex; i++) {
         const row = {};
         columns.forEach((column) => {
-            row[column.dataProperty] = data[i][column.dataProperty];
+            if (data?.[i]?.[column.dataProperty] !== undefined) {
+                row[column.dataProperty] = data[i][column.dataProperty];
+            }
         });
-        portion.push(row);
+        if (Object.keys(row).length > 0) portion.push(row);
     }
     return portion;
 });
